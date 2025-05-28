@@ -1,0 +1,56 @@
+# Node modules (if you use Node.js tooling)
+node_modules/
+
+# Composer dependencies
+/vendor/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Cache and session files
+*.cache
+*.tmp
+*.swp
+*.bak
+*.pid
+*.seed
+*.pid.lock
+*.sess
+
+# PHPStorm or JetBrains specific
+*.iml
+out/
+
+# PHPStorm and NetBeans settings
+nbproject/private/
+*.orig
+
+# Build directories
+/dist/
+/build/
+out/
+
+# Misc
+*.gz
+*.zip
+*.tar
+*.tgz
+*.7z
+
+# Ignore uploaded files or other large local storage
+/uploads/
+.config/config.php
