@@ -131,7 +131,7 @@ php -S localhost:8000
 
 ## 🌐 Access the App
 
-Visit [http://localhost:8000/pages/auth_pages/sign_in.php](http://localhost:8000/pages/auth_pages/sign_in.php) to log in or register.
+Visit [http://localhost:8000/path-to-index.php](http://localhost:8000/path-to-index.php) to log in or register.
 
 ---
 
