@@ -18,7 +18,6 @@ $username = (new Auth_Services($db))->getUsername();
 </head>
 
 <body class="bg-[#0a0a0a] text-white min-h-screen m-0 px-8 py-8">
-    <!-- Place this inside <body> -->
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
         <img data-url="index.php" onclick="goToPage(this)" src="assets/images/logo.png" alt="MoneyMate Logo" class="cursor-pointer w-[10em] h-[3.5em]">
@@ -82,6 +81,45 @@ $username = (new Auth_Services($db))->getUsername();
         </ul>
     </div>
 
+    <!-- Main Budget & Saving Goal Card Section -->
+    <div class="mt-10 space-y-6">
+
+        <!-- Budget + Saving Goal Card -->
+        <div class="bg-[#1b2a42] rounded-2xl overflow-hidden text-white">
+            <!-- Budget Row -->
+            <div class="bg-[#1e3a5f] px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">BUDGET</h2>
+                <p class="text-xl font-light">Rp4,000,000</p>
+            </div>
+
+            <!-- Saving Goal Row -->
+            <div class="bg-[#0f1c30] px-6 py-4 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold">SAVING GOAL</h3>
+                    <p class="text-sm text-gray-400">by 5 March</p>
+                </div>
+                <p class="text-xl font-light">Rp2,000,000</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons (Fixed Layout) -->
+        <div class="flex items-center justify-center gap-4">
+            <!-- Edit Budget Button -->
+            <button class="bg-[#1e3a5f] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
+                EDIT BUDGET
+            </button>
+
+            <!-- Plus Button -->
+            <img src="assets/images/add_expense_button.svg" alt="add expense" class="w-10 h-10 cursor-pointer">
+
+            <!-- Edit Saving Goal Button -->
+            <button class="bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
+                EDIT SAVING GOAL
+            </button>
+        </div>
+
+
+    </div>
 
 </body>
 
