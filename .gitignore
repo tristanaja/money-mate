@@ -53,4 +53,3 @@ out/
 
 # Ignore uploaded files or other large local storage
 /uploads/
-.config/config.php

@@ -19,7 +19,8 @@ class Auth_Services
 
         if ($checkStmt->num_rows > 0) {
             $_SESSION['error'] = 'Email Already Registered';
-            return false;
+            header('Location: ../pages/auth_pages/sign_up.php');
+            exit;
         }
 
         $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -56,5 +57,19 @@ class Auth_Services
     public function logout()
     {
         session_destroy();
+    }
+
+    public function getUsername()
+    {
+        if (isset($_SESSION["user_id"])) {
+            $usernameUsed = "";
+            $stmt = $this->db->prepare("SELECT username FROM users WHERE id = ?");
+            $stmt->bind_param("i", $_SESSION["user_id"]);
+            $stmt->execute();
+            $stmt->bind_result($usernameUsed);
+            $stmt->fetch();
+            return $usernameUsed;
+        }
+        return "User";
     }
 }

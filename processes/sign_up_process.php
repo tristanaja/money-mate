@@ -1,35 +1,29 @@
 <?php
 require_once "../includes/auth_process_essentials.php";
+require_once "../includes/helper.php";
 
 $db = (new Database())->connect();
 $auth = new Auth_Services($db);
+$helper = new Helper();
 
 $username = $_REQUEST['username'] ?? '';
 $email = $_REQUEST['email'] ?? '';
 $password = $_REQUEST['password'] ?? '';
 
-if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
-    $_SESSION['error'] = 'Only letters, numbers, and underscores. 3–20 chars';
-    header('Location: ../pages/auth_pages/sign_up.php');
-    exit;
+if (!preg_match('/^[a-zA-Z0-9_]{3,15}$/', $username)) {
+    $helper->redirect_with_error('../pages/auth_pages/sign_up.php', 'Only letters, numbers, and underscores. with lenght of 3–15 chars');
 }
 
 if (empty($email) || empty($password)) {
-    $_SESSION['error'] = 'All Fields Required.';
-    header('Location: ../pages/auth_pages/sign_up.php');
-    exit;
+    $helper->redirect_with_error('../pages/auth_pages/sign_up.php', 'All Fields Required.');
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $_SESSION['error'] = 'Invalid Email Format';
-    header('Location: ../pages/auth_pages/sign_up.php');
-    exit;
+    $helper->redirect_with_error('../pages/auth_pages/sign_up.php', 'Invalid Email Format');
 }
 
 if (strlen($password) < 8) {
-    $_SESSION['error'] = 'Password Must Contain 8 Characters';
-    header('Location: ../pages/auth_pages/sign_up.php');
-    exit;
+    $helper->redirect_with_error('../pages/auth_pages/sign_up.php', 'Password Must Contain 8 Characters');
 }
 
 if ($auth->register($username, $email, $password)) {
@@ -37,7 +31,5 @@ if ($auth->register($username, $email, $password)) {
     header('Location: ../pages/auth_pages/sign_in.php');
     exit;
 } else {
-    $_SESSION['error'] = 'Registration Failed.';
-    header('Location: ../pages/auth_pages/sign_up.php');
-    exit;
+    $helper->redirect_with_error('../pages/auth_pages/sign_up.php', 'Registration Failed.');
 }
