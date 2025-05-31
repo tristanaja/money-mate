@@ -21,15 +21,23 @@
 
 ```
 .
-├── .config/           # Configuration (uses .env for secrets)
-├── assets/            # Static assets (images, icons, etc.)
-├── auth/              # Authentication logic (Auth_Services, etc.)
-├── includes/          # Shared PHP includes (headers, footers)
+├── .config/                  # Configuration (uses .env for secrets)
+├── .github/                  # CODEOWNERS
+├── assets/                   # Static assets (images, icons, etc.)
+├── auth/                     # Authentication logic (Auth_Services, etc.)
+├── components/               # Modular Re-useable Components
+├── components/               # Logic for features (Budgeting, Saving Goal, Expenses, Report)
+├── includes/                 # Shared PHP includes (headers, footers)
 ├── pages/
-│   └── auth_pages/    # Sign in, sign up, etc.
-├── processes/         # Backend logic for authentication actions
-├── index.php          # Protected landing page (requires login)
-└── .gitignore         # Files/directories to exclude from git
+│   └── auth_pages/           # Sign in, sign up, etc.
+├── processes/                # Process logic for forms submission
+│   └── budget/               # Process logic for budgeting feature
+│   └── log_out_process.php   # Process logic for user log-out
+│   └── sign_in_process.php   # Process logic for user sign-in
+│   └── sign_up_process.php   # Process logic for user sign-up
+├── public                    # All js functions and/or optionally css
+├── index.php                 # Protected landing page (requires login)
+└── .gitignore                # Files/directories to exclude from git
 ```
 
 > **Note:** The initial page when accessing the application is `index.php`, which is the authenticated landing page.
