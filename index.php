@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/.config/auth_guard.php';
 require_once __DIR__ . '/includes/auth_process_essentials.php';
 require_once __DIR__ . '/features/budget_services.php';
+require_once __DIR__ . '/features/saving_goal_services.php';
 
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['error']);
@@ -17,6 +18,12 @@ $db = (new Database())->connect();
 $username = (new Auth_Services($db))->getUsername();
 $budgetData = (new budget_services($db))->getBudgets();
 $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
+
+$savingGoalData = (new saving_goal_services($db))->getsavingGoal();
+$currentsavingGoalAmount = !empty($savingGoalData) ? $savingGoalData[0]['amount'] : 0.0;
+$currentsavingGoalMonth = !empty($savingGoalData) ? $savingGoalData[0]['target_month'] : 0.0;
+$currentsavingGoalYear = !empty($savingGoalData) ? $savingGoalData[0]['target_year'] : 0.0;
+new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
 ?>
 
 <!DOCTYPE html>
@@ -60,14 +67,14 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
         <!-- Navigation (desktop) -->
         <nav class="hidden xl:flex">
             <ul class="flex gap-8 items-center">
-                <li class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
-                    <a href="index.php" class="transition-all duration-200 ease-in-out text-[#fafafa] hover:text-[#ff8c00]">Home</a>
+                <li data-url="index.php" onclick="goToPage(this)" class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
+                    <a class="transition-all duration-200 ease-in-out text-[#fafafa] hover:text-[#ff8c00] cursor-pointer">Home</a>
                 </li>
                 <li class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
-                    <a href="#" class="text-white hover:text-orange-500">Expense Category</a>
+                    <a href="#" class="text-white hover:text-orange-500 cursor-pointer">Expense Category</a>
                 </li>
-                <li class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
-                    <a href="#" class="text-white hover:text-orange-500">Expense Report</a>
+                <li data-url="pages/expense_report/expense_report.php" onclick="goToPage(this)" class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
+                    <a class="text-white hover:text-orange-500 cursor-pointer">Expense Report</a>
                 </li>
                 <li class="group transition-all ease-in-out duration-75 hover:bg-orange-600 flex items-center gap-2 border-[1px] hover:border-0 py-2 pl-4 pr-2 rounded-full cursor-pointer">
                     <p class="transition-all ease-in-out duration-75 group-hover:hidden"><?= $username ?></p>
@@ -89,16 +96,16 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
         <!-- Menu -->
         <ul class="mt-6 flex flex-col text-white px-6">
             <div class="flex flex-col gap-8">
-                <li class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
-                    <a href="index.php" class="text-base">Homepage</a>
+                <li data-url="index.php" onclick="goToPage(this)" class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
+                    <a class="text-base">Home</a>
                     <img src="assets/images/home_menu_icon.svg" alt="Home Icon">
                 </li>
                 <li class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
                     <a href="#" class="text-base">Expense Category</a>
                     <img src="assets/images/expense_category_menu_icon.svg" alt="Expense Category Icon">
                 </li>
-                <li class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
-                    <a href="#" class="text-base">Expense Report</a>
+                <li data-url="pages/expense_report/expense_report.php" onclick="goToPage(this)" class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
+                    <a class="text-base">Expense Report</a>
                     <img src="assets/images/expense_report_menu_icon.svg" alt="Expense Report Icon">
                 </li>
                 <li onclick="toggleMobileMenu()" class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
@@ -121,16 +128,34 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <!-- Budget Row -->
             <div class="bg-[#1e3a5f] px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">BUDGET</h2>
-                <p id="budgetAmount" class="text-xl font-light">Rp <?= number_format($currentBudget, 0, ',', '.') ?></p>
+                <p id="budgetAmount" class="text-xl font-light" data-amount="<?= $currentBudget ?>">Rp <?= number_format($currentBudget, 0, ',', '.') ?></p>
             </div>
 
             <!-- Saving Goal Row -->
             <div class="bg-[#0f1c30] px-6 py-4 flex justify-between items-center">
                 <div>
                     <h3 class="text-lg font-bold">SAVING GOAL</h3>
-                    <p class="text-sm text-gray-400">by 5 March</p>
+                    <?php
+                    $monthNames = [
+                        1 => 'January',
+                        2 => 'February',
+                        3 => 'March',
+                        4 => 'April',
+                        5 => 'May',
+                        6 => 'June',
+                        7 => 'July',
+                        8 => 'August',
+                        9 => 'September',
+                        10 => 'October',
+                        11 => 'November',
+                        12 => 'December'
+                    ];
+                    $displayMonth = $monthNames[(int)$currentsavingGoalMonth] ?? 'Unknown';
+                    ?>
+                    <p class="text-sm text-gray-400">by <?= $displayMonth . ' ' . $currentsavingGoalYear ?> </p>
+
                 </div>
-                <p class="text-xl font-light">Rp 2,000,000</p>
+                <p id="savingGoalAmount" class="text-xl font-light" data-amount="<?= $currentsavingGoalAmount ?>">Rp <?= number_format($currentsavingGoalAmount, 0, ',', '.') ?></p>
             </div>
         </div>
 
@@ -145,7 +170,7 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <img data-url="processes/log_out_process.php" onclick="goToPage(this)" src="assets/images/add_expense_button.svg" alt="add expense" class="transition-all ease-in-out duration-150 hover:scale-125 hover:mx-1 md:hover:mx-2 w-10 h-10 cursor-pointer">
 
             <!-- Edit Saving Goal Button -->
-            <button class="bg-[#1e3a5f] hover:bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
+            <button id="editSavingButton" class="bg-[#1e3a5f] hover:bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
                 EDIT SAVING GOAL
             </button>
         </div>
@@ -154,7 +179,11 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
     </div>
 
     <?php include __DIR__ . '/components/edit_budget_pops.php'; ?>
+    <?php include __DIR__ . '/components/edit_saving_goal_pops.php'; ?>
     <script src="public/js/function_helper.js"></script>
+    <script type="module" src="public/js/initAnimateBudget.js"></script>
+    <script type="module" src="public/js/initAnimateSavingGoal.js"></script>
+    <script type="module" src="public/js/mainAnimate.js"></script>
     <script src="public/js/pops_helper.js"></script>
     <script>
         window.currentBudget = <?= json_encode($currentBudget) ?>;
