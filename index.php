@@ -1,9 +1,22 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/.config/auth_guard.php';
 require_once __DIR__ . '/includes/auth_process_essentials.php';
+require_once __DIR__ . '/features/budget_services.php';
+
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
+
+$success = $_SESSION['success'] ?? null;
+unset($_SESSION['success']);
 
 $db = (new Database())->connect();
 $username = (new Auth_Services($db))->getUsername();
+$budgetData = (new budget_services($db))->getBudgets();
+$currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
 ?>
 
 <!DOCTYPE html>
@@ -14,10 +27,29 @@ $username = (new Auth_Services($db))->getUsername();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoneyMate</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="public/js/function_helper.js" defer></script>
 </head>
 
-<body class="bg-[#0a0a0a] text-white min-h-screen m-0 px-8 py-8">
+<body class="bg-[#0a0a0a] text-white min-h-screen m-0 px-8 py-8 flex items-center flex-col">
+    <?php if ($error): ?>
+        <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-[#14233C] text-black w-[90%] max-w-md p-6 rounded-xl shadow-lg flex flex-col justify-center">
+                <h2 class="text-[2em] font-bold text-center text-[#c62424] mb-2">ERROR</h2>
+                <p class="text-center text-[1em] mb-[2.5em] text-[#fafafa]"><?= htmlspecialchars($error) ?></p>
+                <button onclick="document.getElementById('errorModal').remove()" class="bg-[#ff8c00] hover:bg-orange-600 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success): ?>
+        <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-[#14233C] text-black w-[90%] max-w-md p-6 rounded-xl shadow-lg flex flex-col justify-center">
+                <h2 class="text-[2em] font-bold text-center text-[#00c853] mb-2">SUCCESS</h2>
+                <p class="text-center text-[1em] mb-[2.5em] text-[#fafafa]"><?= htmlspecialchars($success) ?></p>
+                <button onclick="document.getElementById('successModal').remove()" class="bg-[#00c853] hover:bg-green-700 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
         <img data-url="index.php" onclick="goToPage(this)" src="assets/images/logo.png" alt="MoneyMate Logo" class="cursor-pointer w-[10em] h-[3.5em]">
@@ -74,22 +106,22 @@ $username = (new Auth_Services($db))->getUsername();
                     <img src="assets/images/close_menu_icon.svg" alt="Close Icon" class="w-5 h-5">
                 </li>
             </div>
-            <li class="absolute bottom-10 right-6 left-6 group transition-all ease-in-out duration-150 flex justify-between items-center bg-orange-600 rounded-md p-2 hover:border-b-2 border-orange-600 hover:pb-3 cursor-pointer">
-                <a href="processes/log_out_process.php" class="text-base">Log Out</a>
+            <li data-url="processes/log_out_process.php" onclick="goToPage(this)" class="absolute bottom-10 right-6 left-6 group transition-all ease-in-out duration-150 flex justify-between items-center bg-orange-600 rounded-md p-2 hover:border-b-2 border-orange-600 hover:pb-3 cursor-pointer">
+                <a class="text-base">Log Out</a>
                 <img src="assets/images/log_out_icon.svg" alt="Expense Report Icon" class="w-6 h-6">
             </li>
         </ul>
     </div>
 
     <!-- Main Budget & Saving Goal Card Section -->
-    <div class="mt-10 space-y-6">
+    <div class="w-full lg:w-[50%] mt-10 space-y-6">
 
         <!-- Budget + Saving Goal Card -->
         <div class="bg-[#1b2a42] rounded-2xl overflow-hidden text-white">
             <!-- Budget Row -->
             <div class="bg-[#1e3a5f] px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">BUDGET</h2>
-                <p class="text-xl font-light">Rp4,000,000</p>
+                <p class="text-xl font-light">Rp <?= number_format($currentBudget, 0, '.', ',') ?></p>
             </div>
 
             <!-- Saving Goal Row -->
@@ -98,22 +130,22 @@ $username = (new Auth_Services($db))->getUsername();
                     <h3 class="text-lg font-bold">SAVING GOAL</h3>
                     <p class="text-sm text-gray-400">by 5 March</p>
                 </div>
-                <p class="text-xl font-light">Rp2,000,000</p>
+                <p class="text-xl font-light">Rp 2,000,000</p>
             </div>
         </div>
 
-        <!-- Action Buttons (Fixed Layout) -->
+        <!-- Action Buttons -->
         <div class="flex items-center justify-center gap-4">
             <!-- Edit Budget Button -->
-            <button class="bg-[#1e3a5f] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
+            <button id="editBudgetButton" class="bg-[#1e3a5f] hover:bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
                 EDIT BUDGET
             </button>
 
             <!-- Plus Button -->
-            <img src="assets/images/add_expense_button.svg" alt="add expense" class="w-10 h-10 cursor-pointer">
+            <img data-url="processes/log_out_process.php" onclick="goToPage(this)" src="assets/images/add_expense_button.svg" alt="add expense" class="transition-all ease-in-out duration-150 hover:scale-125 hover:mx-1 md:hover:mx-2 w-10 h-10 cursor-pointer">
 
             <!-- Edit Saving Goal Button -->
-            <button class="bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
+            <button class="bg-[#1e3a5f] hover:bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
                 EDIT SAVING GOAL
             </button>
         </div>
@@ -121,6 +153,9 @@ $username = (new Auth_Services($db))->getUsername();
 
     </div>
 
+    <?php include __DIR__ . '/components/edit_budget_pops.php'; ?>
+    <script src="public/js/function_helper.js"></script>
+    <script src="public/js/pops_helper.js"></script>
 </body>
 
 </html>

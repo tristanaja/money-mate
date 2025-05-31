@@ -9,4 +9,10 @@ class Helper
         header("Location: $url");
         exit();
     }
+    public static function redirect_with_success($url, $message)
+    {
+        $_SESSION['success'] = $message;
+        header("Location: $url");
+        exit();
+    }
 }
