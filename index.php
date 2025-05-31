@@ -35,7 +35,7 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <div class="bg-[#14233C] text-black w-[90%] max-w-md p-6 rounded-xl shadow-lg flex flex-col justify-center">
                 <h2 class="text-[2em] font-bold text-center text-[#c62424] mb-2">ERROR</h2>
                 <p class="text-center text-[1em] mb-[2.5em] text-[#fafafa]"><?= htmlspecialchars($error) ?></p>
-                <button onclick="document.getElementById('errorModal').remove()" class="bg-[#ff8c00] hover:bg-orange-600 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
+                <button onclick="closeModal('errorModal')" class="bg-[#ff8c00] hover:bg-orange-600 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
             </div>
         </div>
     <?php endif; ?>
@@ -45,7 +45,7 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <div class="bg-[#14233C] text-black w-[90%] max-w-md p-6 rounded-xl shadow-lg flex flex-col justify-center">
                 <h2 class="text-[2em] font-bold text-center text-[#00c853] mb-2">SUCCESS</h2>
                 <p class="text-center text-[1em] mb-[2.5em] text-[#fafafa]"><?= htmlspecialchars($success) ?></p>
-                <button onclick="document.getElementById('successModal').remove()" class="bg-[#00c853] hover:bg-green-700 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
+                <button onclick="closeModal('successModal')" class="bg-[#00c853] hover:bg-green-700 rounded-full text-[#fafafa] text-2xl font-bold px-6 py-2">Close</button>
             </div>
         </div>
     <?php endif; ?>
@@ -121,7 +121,7 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <!-- Budget Row -->
             <div class="bg-[#1e3a5f] px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">BUDGET</h2>
-                <p class="text-xl font-light">Rp <?= number_format($currentBudget, 0, '.', ',') ?></p>
+                <p id="budgetAmount" class="text-xl font-light">Rp <?= number_format($currentBudget, 0, '.', ',') ?></p>
             </div>
 
             <!-- Saving Goal Row -->
@@ -156,6 +156,9 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
     <?php include __DIR__ . '/components/edit_budget_pops.php'; ?>
     <script src="public/js/function_helper.js"></script>
     <script src="public/js/pops_helper.js"></script>
+    <script>
+        window.currentBudget = <?= json_encode($currentBudget) ?>;
+    </script>
 </body>
 
 </html>

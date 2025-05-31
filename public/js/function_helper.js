@@ -25,3 +25,40 @@ function toggleMobileMenu() {
     );
   }
 }
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.remove();
+
+  // Only start animation after closing success modal
+  // You can customize per modal type here
+  if (modalId === "successModal" || modalId === "errorModal") {
+    const budgetEl = document.getElementById("budgetAmount");
+    if (budgetEl) {
+      animateBudgetAmount(0, window.currentBudget || 0);
+    }
+  }
+}
+
+function animateBudgetAmount(start, end, duration = 1000) {
+  const el = document.getElementById("budgetAmount");
+  if (!el) return;
+
+  const startTime = performance.now();
+
+  function formatRupiah(value) {
+    return "Rp " + value.toLocaleString("id-ID");
+  }
+
+  function update(timestamp) {
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const current = Math.floor(progress * (end - start) + start);
+    el.textContent = formatRupiah(current);
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    }
+  }
+
+  requestAnimationFrame(update);
+}
