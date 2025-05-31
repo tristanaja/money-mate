@@ -40,7 +40,7 @@ function closeModal(modalId) {
   }
 }
 
-function animateBudgetAmount(start, end, duration = 1000) {
+function animateBudgetAmount(start, end, duration = 500) {
   const el = document.getElementById("budgetAmount");
   if (!el) return;
 

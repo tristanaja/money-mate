@@ -121,7 +121,7 @@ $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
             <!-- Budget Row -->
             <div class="bg-[#1e3a5f] px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">BUDGET</h2>
-                <p id="budgetAmount" class="text-xl font-light">Rp <?= number_format($currentBudget, 0, '.', ',') ?></p>
+                <p id="budgetAmount" class="text-xl font-light">Rp <?= number_format($currentBudget, 0, ',', '.') ?></p>
             </div>
 
             <!-- Saving Goal Row -->
