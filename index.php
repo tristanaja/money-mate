@@ -70,8 +70,8 @@ new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
                 <li data-url="index.php" onclick="goToPage(this)" class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
                     <a class="transition-all duration-200 ease-in-out text-[#fafafa] hover:text-[#ff8c00] cursor-pointer">Home</a>
                 </li>
-                <li class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
-                    <a href="#" class="text-white hover:text-orange-500 cursor-pointer">Expense Category</a>
+                <li data-url="pages/category_page/category_dashboard.php" onclick="goToPage(this)" class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
+                    <a class="text-white hover:text-orange-500 cursor-pointer">Expense Category</a>
                 </li>
                 <li data-url="pages/expense_report/expense_report.php" onclick="goToPage(this)" class="transition-all duration-200 ease-in-out transform hover:scale-125 hover:mx-2">
                     <a class="text-white hover:text-orange-500 cursor-pointer">Expense Report</a>
@@ -100,8 +100,8 @@ new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
                     <a class="text-base">Home</a>
                     <img src="assets/images/home_menu_icon.svg" alt="Home Icon">
                 </li>
-                <li class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
-                    <a href="#" class="text-base">Expense Category</a>
+                <li data-url="pages/category_page/category_dashboard.php" onclick="goToPage(this)" class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">
+                    <a class="text-base">Expense Category</a>
                     <img src="assets/images/expense_category_menu_icon.svg" alt="Expense Category Icon">
                 </li>
                 <li data-url="pages/expense_report/expense_report.php" onclick="goToPage(this)" class="group transition-all ease-in-out duration-150 flex justify-between items-center hover:border-b-2 hover:border-orange-600 hover:pb-3 cursor-pointer">

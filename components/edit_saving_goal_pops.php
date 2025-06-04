@@ -1,5 +1,5 @@
-<div id="editSavingGoalModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
-    <div class="bg-gradient-to-br from-[#0b192c] to-[rgba(11,25,44,0.75)] backdrop-blur-sm p-6 rounded-xl w-[90%] max-w-md text-white">
+<div id="editSavingGoalModal" class="backdrop-blur-sm fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-gradient-to-br from-[#0b192c] to-[rgba(11,25,44,0.75)]  p-6 rounded-xl w-[90%] max-w-md text-white">
         <h2 class="text-xl font-bold mb-4">Edit Saving Goal</h2>
 
         <form action="processes/saving_goal/edit_saving_goal_process.php" method="POST">
