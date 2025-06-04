@@ -27,15 +27,6 @@
                     Edit
                 </button>
             </div>
-
-            <!-- Delete Button -->
-            <button
-                type="submit"
-                formaction="../../processes/category/delete_category_process.php"
-                onclick="return confirm('Are you sure you want to delete this category?')"
-                class="w-full py-2 rounded bg-red-700 hover:bg-red-800 text-white font-semibold">
-                Delete Category
-            </button>
         </form>
     </div>
 </div>

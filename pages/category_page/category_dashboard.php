@@ -124,10 +124,14 @@ $categories = $categoryService->getCategories();
                         <h3 class="text-[1.3em] font-bold"><?= htmlspecialchars($category['name']) ?></h3>
                         <p class="text-[0.8em] font-light text-[#ff6500]"><?= $categoryService->getExpenseCount($id) ?> Expenses</p>
                     </div>
-                    <img onclick="toggleEditCategory(<?= $id ?>)" src="../../assets/images/edit_category_icon.svg" alt="Edit" class="w-5 h-5 cursor-pointer">
+                    <div class="flex flex-row gap-6">
+                        <img onclick="toggleEditCategory(<?= $id ?>)" src="../../assets/images/edit_category_icon.svg" alt="Edit" class="w-5 h-5 cursor-pointer">
+                        <img onclick="toggleDeleteCategory(<?= $id ?>)" src="../../assets/images/delete_category_icon.svg" alt="Delete" class="w-5 h-5 cursor-pointer">
+                    </div>
                 </div>
 
                 <?php require __DIR__ . '/../../components/edit_category_pops.php'; ?>
+                <?php require __DIR__ . '/../../components/delete_category_pops.php'; ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -143,6 +147,7 @@ $categories = $categoryService->getCategories();
     <script src="../../public/js/pops_category_helper.js"></script>
     <script src="../../public/js/close_modal_category.js"></script>
     <script src="../../public/js/edit_category_pops.js"></script>
+    <script src="../../public/js/delete_category_pops.js"></script>
 </body>
 
 </html>
