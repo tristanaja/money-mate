@@ -7,6 +7,7 @@ require_once __DIR__ . '/.config/auth_guard.php';
 require_once __DIR__ . '/includes/auth_process_essentials.php';
 require_once __DIR__ . '/features/budget_services.php';
 require_once __DIR__ . '/features/saving_goal_services.php';
+require_once __DIR__ . '/features/expense_services.php';
 
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['error']);
@@ -15,6 +16,7 @@ $success = $_SESSION['success'] ?? null;
 unset($_SESSION['success']);
 
 $db = (new Database())->connect();
+$budgetService = new budget_services($db);
 $username = (new Auth_Services($db))->getUsername();
 $budgetData = (new budget_services($db))->getBudgets();
 $currentBudget = !empty($budgetData) ? $budgetData[0]['amount'] : 0.0;
@@ -23,6 +25,7 @@ $savingGoalData = (new saving_goal_services($db))->getsavingGoal();
 $currentsavingGoalAmount = !empty($savingGoalData) ? $savingGoalData[0]['amount'] : 0.0;
 $currentsavingGoalMonth = !empty($savingGoalData) ? $savingGoalData[0]['target_month'] : 0.0;
 $currentsavingGoalYear = !empty($savingGoalData) ? $savingGoalData[0]['target_year'] : 0.0;
+$expenses = (new expense_services($db, $budgetService))->getExpenses();
 new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
 ?>
 
@@ -167,7 +170,7 @@ new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
             </button>
 
             <!-- Plus Button -->
-            <img data-url="processes/log_out_process.php" onclick="goToPage(this)" src="assets/images/add_expense_button.svg" alt="add expense" class="transition-all ease-in-out duration-150 hover:scale-125 hover:mx-1 md:hover:mx-2 w-10 h-10 cursor-pointer">
+            <img onclick="toggleAddExpense()" src="assets/images/add_expense_button.svg" alt="add expense" class="transition-all ease-in-out duration-150 hover:scale-125 hover:mx-1 md:hover:mx-2 w-10 h-10 cursor-pointer">
 
             <!-- Edit Saving Goal Button -->
             <button id="editSavingButton" class="bg-[#1e3a5f] hover:bg-[#0f1c30] text-white py-3 px-5 rounded-xl font-bold w-full text-[10px]">
@@ -178,9 +181,60 @@ new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
 
     </div>
 
+    <!-- Expenses List -->
+    <?php
+    // Group expenses by date (e.g., '2025-06-10')
+    $groupedExpenses = [];
+
+    foreach ($expenses as $expense) {
+        $date = date('Y-m-d', strtotime($expense['created_at']));
+        $groupedExpenses[$date][] = $expense;
+    }
+
+    krsort($groupedExpenses);
+    foreach ($groupedExpenses as &$expensesForDate) {
+        usort($expensesForDate, function ($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        });
+    }
+    unset($expensesForDate);
+    ?>
+
+    <?php foreach ($groupedExpenses as $date => $expensesForDate): ?>
+        <!-- Date Header -->
+        <p class="text-sm text-gray-300 mb-2 w-full mt-6"><?= date('l, d F Y', strtotime($date)) ?></p>
+
+        <?php foreach ($expensesForDate as $index => $expense): ?>
+            <div class="w-full mb-4 bg-[#1e3e62] bg-opacity-70 backdrop-blur-sm rounded-xl overflow-hidden text-white">
+                <!-- Top Row -->
+                <div class="px-6 py-4 flex justify-between items-center cursor-pointer" onclick="toggleExpenseDetails('expenseDetails<?= $expense['id'] ?>')">
+                    <p><span class="text-blue-400 mr-4"><?= htmlspecialchars($expense['quantity']) ?>x</span> <?= htmlspecialchars($expense['title']) ?> - <?= htmlspecialchars($expense['description']) ?></p>
+                    <div class="flex items-center gap-2">
+                        <img src="assets/images/down_arrow.svg" class="w-4 h-4 transform transition-transform duration-200" id="arrow<?= $expense['id'] ?>">
+                        <p class="text-[#ff6500] font-semibold">Rp<?= number_format($expense['amount'], 0, ',', '.') ?></p>
+                    </div>
+                </div>
+
+                <!-- Collapsible Details -->
+                <div id="expenseDetails<?= $expense['id'] ?>" class="hidden bg-[#0b192c] px-6 py-3 flex justify-around items-center">
+                    <form method="POST" action="processes/expense/delete_expense_process.php" class="w-min flex justify-center">
+                        <input type="hidden" name="id" value="<?= $expense['id'] ?>">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-bold w-[120px]">Delete</button>
+                    </form>
+                    <button onclick="toggleEditExpense(<?= $expense['id'] ?>)" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md font-bold w-[120px]">Edit</button>
+                </div>
+            </div>
+
+            <?php require_once __DIR__ . '/components/edit_expense_pops.php'; ?>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+
+
     <?php include __DIR__ . '/components/edit_budget_pops.php'; ?>
     <?php include __DIR__ . '/components/edit_saving_goal_pops.php'; ?>
+    <?php include __DIR__ . '/components/add_expense_pops.php'; ?>
     <script src="public/js/function_helper.js"></script>
+    <script src="public/js/expense_helper.js"></script>
     <script type="module" src="public/js/initAnimateBudget.js"></script>
     <script type="module" src="public/js/initAnimateSavingGoal.js"></script>
     <script type="module" src="public/js/mainAnimate.js"></script>

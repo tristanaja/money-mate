@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../includes/auth_process_essentials.php';
 
 class category_services
@@ -144,6 +143,32 @@ class category_services
         }
 
         return 0;
+    }
+
+    public function getExpenseSum($id)
+    {
+        if (!isset($_SESSION['user_id']) || !is_numeric($id)) return 0.0;
+
+        // Check if category exists
+        $check = $this->db->prepare("SELECT id FROM categories WHERE id = ? AND user_id = ?");
+        $check->bind_param("ii", $id, $_SESSION['user_id']);
+        $check->execute();
+        $check->store_result();
+
+        if ($check->num_rows === 0) {
+            return 0.0; // Category does not exist
+        }
+
+        // Sum expenses in the category
+        $stmt = $this->db->prepare("SELECT SUM(amount) as total FROM expenses WHERE category_id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $id, $_SESSION['user_id']);
+
+        if ($stmt->execute()) {
+            $result = $stmt->get_result()->fetch_assoc();
+            return (float)$result['total'];
+        }
+
+        return 0.0;
     }
 
     public function getIdByCategory($name)
