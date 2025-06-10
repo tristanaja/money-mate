@@ -1,6 +1,6 @@
 # MoneyMate
 
-**MoneyMate** is a PHP web application for user authentication and personal expense tracking. Built with modularity and security in mind, it uses environment variables for configuration and follows best practices for password management.
+**MoneyMate** is a PHP web application for personal expense tracking. Built with modularity and security in mind, it uses environment variables for configuration and follows best practices for password management.
 
 ---
 
@@ -14,6 +14,7 @@
 - Responsive UI with Tailwind CSS
 - Expense Management (Add/Edit/Delete)
 - Budget Planning & Saving Goals
+- Adjustable Monthly Expense Report
 
 ---
 
@@ -26,17 +27,22 @@
 ├── assets/                   # Static assets (images, icons, etc.)
 ├── auth/                     # Authentication logic (Auth_Services, etc.)
 ├── components/               # Modular Re-useable Components
-├── components/               # Logic for features (Budgeting, Saving Goal, Expenses, Report)
+├── features/                 # Logic for features (Budgeting, Saving Goal, Expenses, Report)
 ├── includes/                 # Shared PHP includes (headers, footers)
 ├── pages/
 │   └── auth_pages/           # Sign in, sign up, etc.
+│   └── category_pages/       # Categories.
+│   └── expense_report/       # Expense Report.
 ├── processes/                # Process logic for forms submission
 │   └── budget/               # Process logic for budgeting feature
+│   └── category/             # Process logic for expense category management feature
+│   └── expense/              # Process logic for expense feature
+│   └── saving_goal/          # Process logic for savings feature
 │   └── log_out_process.php   # Process logic for user log-out
 │   └── sign_in_process.php   # Process logic for user sign-in
 │   └── sign_up_process.php   # Process logic for user sign-up
-├── public                    # All js functions and/or optionally css
-├── index.php                 # Protected landing page (requires login)
+├── public                    # All js functions
+├── index.php                 # Protected home page (requires login)
 └── .gitignore                # Files/directories to exclude from git
 ```
 
