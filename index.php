@@ -202,10 +202,10 @@ new saving_goal_services($db)->checkAndUpdateSavingGoalStatus();
 
     <?php foreach ($groupedExpenses as $date => $expensesForDate): ?>
         <!-- Date Header -->
-        <p class="text-sm text-gray-300 mb-2 w-full mt-6"><?= date('l, d F Y', strtotime($date)) ?></p>
+        <p class="text-sm text-gray-300 mb-2 w-full lg:w-[50%] mt-6"><?= date('l, d F Y', strtotime($date)) ?></p>
 
         <?php foreach ($expensesForDate as $index => $expense): ?>
-            <div class="w-full mb-4 bg-[#1e3e62] bg-opacity-70 backdrop-blur-sm rounded-xl overflow-hidden text-white">
+            <div class="w-full lg:w-[50%] mb-4 bg-[#1e3e62] bg-opacity-70 backdrop-blur-sm rounded-xl overflow-hidden text-white">
                 <!-- Top Row -->
                 <div class="px-6 py-4 flex justify-between items-center cursor-pointer" onclick="toggleExpenseDetails('expenseDetails<?= $expense['id'] ?>')">
                     <p><span class="text-blue-400 mr-4"><?= htmlspecialchars($expense['quantity']) ?>x</span> <?= htmlspecialchars($expense['title']) ?> - <?= htmlspecialchars($expense['description']) ?></p>
