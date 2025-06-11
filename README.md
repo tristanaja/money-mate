@@ -101,7 +101,10 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    user_id INT UNSIGNED NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    UNIQUE KEY unique_user_category (user_id, name),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE expenses (
@@ -111,6 +114,8 @@ CREATE TABLE expenses (
     description VARCHAR(255),
     amount DECIMAL(12,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    quantity INT NOT NULL DEFAULT 1,
+    title VARCHAR(255) NOT NULL DEFAULT 'Expense',
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
 );
